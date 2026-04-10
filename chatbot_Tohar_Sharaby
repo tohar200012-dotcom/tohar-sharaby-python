@@ -1,0 +1,208 @@
+import random
+
+# =============================================================================
+# BOT DATA
+# =============================================================================
+
+bot_name = "TSbot"
+
+greetings = ["Hi", "Hello", "Hey", "Yo", "Hi there"]
+goodbyes = ["Bye", "Goodbye", "See you", "Later", "Bye bye"]
+
+jokes = [
+    "Why did the computer go to sleep? Because it had too many tabs open.",
+    "Why do programmers hate nature? Too many bugs.",
+    "Why did the math book look sad? It had too many problems.",
+    "Why don't robots get tired? Because they recharge.",
+    "Why did the computer catch a cold? It left its Windows open."
+]
+
+default_responses = [
+    "Ok",
+    "I see",
+    "Tell me more",
+    "Cool",
+    "Alright"
+]
+
+# =============================================================================
+# HELPER FUNCTIONS
+# =============================================================================
+
+def print_separator():
+    print("==========================================")
+
+def print_bot(message):
+    print(f"{bot_name}: {message}")
+
+def show_help():
+    print_bot("I can:")
+    print("- Chat with you")
+    print("- Tell jokes")
+    print("- Play games")
+    print("- Do simple math")
+    print("- Type 'bye' to exit")
+
+# =============================================================================
+# GREETING
+# =============================================================================
+
+def greet_user():
+    print_separator()
+    print_bot("Hi, I'm TSbot")
+    
+    name = input("What is your name? ").strip()
+    
+    print_bot(f"Nice to meet you {name}")
+    return name
+
+# =============================================================================
+# FEATURES
+# =============================================================================
+
+def tell_joke():
+    return random.choice(jokes)
+
+# NUMBER GUESS GAME
+def play_guess_game():
+    number = random.randint(1, 20)
+    attempts = 0
+
+    print_bot("I am thinking of a number between 1 and 20")
+
+    while True:
+        try:
+            guess = int(input("Your guess: "))
+            attempts += 1
+
+            if guess < number:
+                print_bot("Too low")
+            elif guess > number:
+                print_bot("Too high")
+            else:
+                return f"You guessed it in {attempts} tries"
+        except:
+            print_bot("Enter a number")
+
+# ROCK PAPER SCISSORS
+def play_rps():
+    choices = ["rock", "paper", "scissors"]
+
+    print_bot("Rock Paper Scissors. Type 'exit' to stop")
+
+    while True:
+        user = input("Your move: ").lower()
+
+        if user == "exit":
+            return "Game ended"
+
+        if user not in choices:
+            print_bot("Not valid")
+            continue
+
+        bot = random.choice(choices)
+        print_bot(f"I chose {bot}")
+
+        if user == bot:
+            print_bot("Tie")
+        elif (user == "rock" and bot == "scissors") or \
+             (user == "paper" and bot == "rock") or \
+             (user == "scissors" and bot == "paper"):
+            print_bot("You win")
+        else:
+            print_bot("I win")
+
+# =============================================================================
+# RESPONSE SYSTEM
+# =============================================================================
+
+def get_response(message, user_name):
+    message = message.lower()
+
+    if "hi" in message or "hello" in message or "hey" in message:
+        return f"{random.choice(greetings)} {user_name}"
+
+    elif "how are you" in message:
+        return "I am good, how are you?"
+
+    elif "your name" in message:
+        return f"My name is {bot_name}"
+
+    elif "joke" in message:
+        return tell_joke()
+
+    elif "game" in message or "play" in message:
+        return "game_menu"
+
+    elif "help" in message:
+        show_help()
+        return "What do you want to do?"
+
+    elif "+" in message or "-" in message or "*" in message or "/" in message:
+        try:
+            return f"Answer: {eval(message)}"
+        except:
+            return "I can't solve that"
+
+    elif "color" in message:
+        return "I like blue"
+
+    elif "food" in message:
+        return "I think pizza is good"
+
+    elif "music" in message:
+        return "I like music"
+
+    else:
+        return random.choice(default_responses)
+
+# =============================================================================
+# MAIN CHAT
+# =============================================================================
+
+def chat():
+    user_name = greet_user()
+    show_help()
+
+    while True:
+        user_message = input(f"\n{user_name}: ").strip()
+
+        if not user_message:
+            continue
+
+        if "bye" in user_message.lower() or "exit" in user_message.lower():
+            print_bot(f"{random.choice(goodbyes)} {user_name}")
+            break
+
+        response = get_response(user_message, user_name)
+
+        if response == "game_menu":
+            print_bot("Choose a game:")
+            print("1. Guess number")
+            print("2. Rock Paper Scissors")
+            print("3. Cancel")
+
+            choice = input("Enter number: ")
+
+            if choice == "1":
+                result = play_guess_game()
+                print_bot(result)
+
+            elif choice == "2":
+                result = play_rps()
+                print_bot(result)
+
+            else:
+                print_bot("Ok maybe later")
+
+        else:
+            print_bot(response)
+
+    print_bot("Bye")
+
+# =============================================================================
+# RUN
+# =============================================================================
+
+if __name__ == "__main__":
+    chat()
